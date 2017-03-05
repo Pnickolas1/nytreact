@@ -1,13 +1,14 @@
 //require react to have access to the library
 var React = require("react");
-var querydb= require('./nytapiworker.js')
 
 //create the form, the main component
 var Form = React.createClass({
 
     //get the initial state of the search field
     getInitialState: function () {
-        return { Topic: "" , StartYear: 2015 , EndYear: 2017 };
+        return { Topic: "" ,
+         StartYear: "" ,
+          EndYear: "" };
     },
 
     // ok so lets think about this: you just created a form, 
@@ -17,6 +18,19 @@ var Form = React.createClass({
         console.log(event.target.id, event.target.value);
         newState[event.target.id] = event.target.value;
         this.setState(newState)
+    },
+
+    handleSubmit: function (event) {
+        //prevent the html from trying to submit a form if the user hits "enter"
+        // instead of clicking button
+        event.preventDefault();
+        //Set the parent to have the terms
+        this.props.setTerm(this.state.Topic, this.state.StartYear, this.state.EndYear);
+        this.setState({
+            Topic: "",
+            StartYear: "",
+            EndYear: ""
+        });
     },
 
     //ok so above we caught the FORM's state as it changes
@@ -52,7 +66,8 @@ var Form = React.createClass({
 
 
                                     <strong> Start Year </strong>
-                                    <input type="number"
+                                    <input type="date"
+                                        data-date-format="YYYY-MM-DD"
                                         value={this.state.StartYear}
                                         className="form-control"
                                         id="StartYear"
@@ -62,7 +77,8 @@ var Form = React.createClass({
                                     <h4 className="">
                                         <strong> End Year </strong> 
                                     </h4>
-                                    <input type="number"
+                                    <input type="date"
+                                        data-date-format="YYYY-MM-DD"
                                         value={this.state.EndYear}
                                         className="form-control"
                                         id="EndYear"
@@ -84,7 +100,8 @@ var Form = React.createClass({
                                 <h2>Topic: {this.state.Topic} </h2>
                                     <h3>From: {this.state.StartYear} </h3>
                                     <h3>To: {this.state.EndYear} </h3> 
-                                    <button 
+                                    <button
+                                        id="submit" 
                                         className="btn btn-primary"
                                         type="submit"
                                         >Search</button>
